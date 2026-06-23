@@ -11,7 +11,7 @@ if (!key || key === "sk_test_YOUR_STRIPE_SECRET_KEY" || !key.startsWith("sk_")) 
 }
 
 const stripe = new Stripe(key, {
-  apiVersion: "2025-05-28.basil",
+  apiVersion: "2026-05-27.dahlia",
   typescript: true,
 });
 

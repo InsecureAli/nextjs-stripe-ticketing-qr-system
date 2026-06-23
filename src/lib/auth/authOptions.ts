@@ -14,6 +14,37 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/signin",
   },
 
+  // CRITICAL: Trust the proxy headers from ngrok
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "none",   // ← allows cross-origin (needed for ngrok)
+        path: "/",
+        secure: true,       // ← required when sameSite is "none"
+      },
+    },
+    callbackUrl: {
+      name: `next-auth.callback-url`,
+      options: {
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: true,
+      },
+    },
+    csrfToken: {
+      name: `next-auth.csrf-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: true,
+      },
+    },
+  },
+
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -25,9 +56,8 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         console.log("\n==================================");
         console.log("🔐 authorize() CALLED");
-        console.log("==================================");
         console.log("Email:", credentials?.email);
-        console.log("Password length:", credentials?.password?.length);
+        console.log("==================================");
 
         if (!credentials?.email || !credentials?.password) {
           console.log("❌ Missing credentials");
@@ -38,38 +68,21 @@ export const authOptions: NextAuthOptions = {
           await connectToDatabase();
           console.log("✅ DB connected");
 
-          const emailToSearch = credentials.email.toLowerCase().trim();
-          console.log("🔍 Looking for:", emailToSearch);
-
           const user = await User.findOne({
-            email: emailToSearch,
+            email: credentials.email.toLowerCase().trim(),
           }).select("+password");
 
           console.log("👤 User found:", user ? "YES" : "NO");
 
-          if (!user) {
-            console.log("❌ User not found");
-            return null;
-          }
-
-          console.log("🔑 Password field exists:", !!user.password);
-          console.log("🔑 Hash preview:", user.password?.substring(0, 15));
-
-          if (!user.password) {
-            console.log("❌ No password field on user document");
-            return null;
-          }
+          if (!user) return null;
+          if (!user.password) return null;
 
           const isValid = await user.comparePassword(credentials.password);
           console.log("🔐 Password match:", isValid);
 
-          if (!isValid) {
-            console.log("❌ Wrong password");
-            return null;
-          }
+          if (!isValid) return null;
 
-          console.log("✅ SUCCESS — returning user");
-          console.log("==================================\n");
+          console.log("✅ Login SUCCESS");
 
           return {
             id: user._id.toString(),
@@ -77,10 +90,8 @@ export const authOptions: NextAuthOptions = {
             name: user.name,
             role: user.role,
           };
-
         } catch (error) {
-          console.log("❌ EXCEPTION:");
-          console.error(error);
+          console.error("❌ Auth error:", error);
           return null;
         }
       },

@@ -4,14 +4,15 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "start": "next start",
+    "start": "next start --hostname 0.0.0.0 --port 3000",
     "lint": "next lint",
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --hostname 0.0.0.0 --port 3000",
     "seed": "npx tsx scripts/seed.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "html5-qrcode": "^2.3.8",
+    "jsqr": "^1.4.0",
     "mongoose": "^9.7.1",
     "next": "16.2.9",
     "next-auth": "^4.24.14",

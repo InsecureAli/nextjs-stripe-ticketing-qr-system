@@ -1,11 +1,3 @@
-/**
- * Dashboard Page — /dashboard
- *
- * Shows the logged-in user's purchased tickets with QR codes.
- * Server Component: fetches tickets directly, then renders TicketCard components.
- * Redirects to sign-in if not authenticated.
- */
-
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth/authOptions";
@@ -21,14 +13,13 @@ async function getUserTickets(userId: string) {
 
   const tickets = await Ticket.find({ userId })
     .populate({ path: "eventId", select: "name date venue imageUrl" })
-    .sort({ createdAt: -1 })
+    .sort({ createdAt: -1, ticketNumber: 1 })
     .lean();
 
   return JSON.parse(JSON.stringify(tickets));
 }
 
 export default async function DashboardPage() {
-  // Server-side auth check — redirect if not logged in
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -57,8 +48,8 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      {/* Stats Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-4 mb-10">
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
           <p className="text-3xl font-bold text-white">{tickets.length}</p>
           <p className="text-gray-500 text-sm mt-1">Total Tickets</p>
@@ -67,15 +58,14 @@ export default async function DashboardPage() {
           <p className="text-3xl font-bold text-green-400">{validTickets.length}</p>
           <p className="text-gray-500 text-sm mt-1">Valid</p>
         </div>
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center col-span-2 sm:col-span-1">
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-center">
           <p className="text-3xl font-bold text-gray-500">{usedTickets.length}</p>
           <p className="text-gray-500 text-sm mt-1">Used</p>
         </div>
       </div>
 
-      {/* Tickets List */}
+      {/* Tickets */}
       {tickets.length === 0 ? (
-        // Empty state
         <div className="text-center py-24 bg-gray-900 rounded-2xl border border-gray-800">
           <div className="text-5xl mb-4">🎫</div>
           <h2 className="text-xl font-bold text-gray-400 mb-2">
@@ -92,34 +82,38 @@ export default async function DashboardPage() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-8">
 
-          {/* Valid Tickets Section */}
+          {/* Valid Tickets */}
           {validTickets.length > 0 && (
             <section>
               <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-                Upcoming ({validTickets.length})
+                <span className="w-2 h-2 bg-green-400 rounded-full" />
+                Upcoming Tickets ({validTickets.length})
               </h2>
               <div className="space-y-4">
-                {validTickets.map((ticket: Parameters<typeof TicketCard>[0]["ticket"]) => (
-                  <TicketCard key={ticket._id} ticket={ticket} />
-                ))}
+                {validTickets.map(
+                  (ticket: Parameters<typeof TicketCard>[0]["ticket"]) => (
+                    <TicketCard key={ticket._id} ticket={ticket} />
+                  )
+                )}
               </div>
             </section>
           )}
 
-          {/* Used Tickets Section */}
+          {/* Used Tickets */}
           {usedTickets.length > 0 && (
-            <section className="mt-8">
+            <section>
               <h2 className="text-lg font-bold text-gray-600 mb-4 flex items-center gap-2">
-                <span className="w-2 h-2 bg-gray-600 rounded-full"></span>
-                Past Tickets ({usedTickets.length})
+                <span className="w-2 h-2 bg-gray-600 rounded-full" />
+                Used Tickets ({usedTickets.length})
               </h2>
               <div className="space-y-4">
-                {usedTickets.map((ticket: Parameters<typeof TicketCard>[0]["ticket"]) => (
-                  <TicketCard key={ticket._id} ticket={ticket} />
-                ))}
+                {usedTickets.map(
+                  (ticket: Parameters<typeof TicketCard>[0]["ticket"]) => (
+                    <TicketCard key={ticket._id} ticket={ticket} />
+                  )
+                )}
               </div>
             </section>
           )}
