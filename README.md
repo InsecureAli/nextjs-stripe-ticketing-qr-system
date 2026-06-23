@@ -1,8 +1,3 @@
-# ConcertTix — README.md
-
-Create a file called `README.md` at your project root and paste this entire content:
-
-```markdown
 <div align="center">
 
 # 🎵 ConcertTix
@@ -70,13 +65,13 @@ ConcertTix is a secure full-stack concert ticket booking and QR-based venue entr
 ---
 
 ## 🔐 Core Security Principle
-
-```
 A QR code is ONLY generated AFTER Stripe cryptographically
 confirms payment via a signed webhook event.
 
 No payment = No QR code. No exceptions.
-```
+
+text
+
 
 The webhook is verified using HMAC-SHA256 signature before any code executes. Forged requests are rejected immediately with a 400 status.
 
@@ -167,48 +162,38 @@ Before you begin, make sure you have:
 ```bash
 git clone https://github.com/yourusername/concert-ticketing-system
 cd concert-ticketing-system
-```
+2. Install Dependencies
+Bash
 
-### 2. Install Dependencies
-
-```bash
 npm install
-```
+3. Set Up Environment Variables
+Bash
 
-### 3. Set Up Environment Variables
-
-```bash
 # Copy the example file
 cp .env.example .env.local
 
 # Edit .env.local with your real values
 # See Environment Variables section below
-```
+4. Seed the Database
+Bash
 
-### 4. Seed the Database
-
-```bash
 # Run ONCE to create admin user and 6 sample events
 npm run seed
-```
-
 Output:
-```
+
+text
+
 ✅ Connected to MongoDB
 ✅ Admin user created:
    Email:    admin@concerttix.com
    Password: Admin1234!
 ✅ Created 6 sample events
 ✅ Seed complete!
-```
+⚙️ Environment Variables
+Create a .env.local file at the project root:
 
----
+Bash
 
-## ⚙️ Environment Variables
-
-Create a `.env.local` file at the project root:
-
-```bash
 # ============================================
 # DATABASE
 # ============================================
@@ -236,79 +221,56 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key
 
 # Get from: running "stripe listen" command output
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
-```
+Getting Each Value
+<details> <summary><b>MongoDB URI</b></summary>
+Go to MongoDB Atlas
+Click Connect on your cluster
+Choose Drivers → Node.js
+Copy the connection string
+Replace <password> with your database user password
+Add /concert_ticketing before the ?
+text
 
-### Getting Each Value
-
-<details>
-<summary><b>MongoDB URI</b></summary>
-
-1. Go to [MongoDB Atlas](https://cloud.mongodb.com/)
-2. Click **Connect** on your cluster
-3. Choose **Drivers** → **Node.js**
-4. Copy the connection string
-5. Replace `<password>` with your database user password
-6. Add `/concert_ticketing` before the `?`
-
-```
 mongodb+srv://user:pass@cluster.net/concert_ticketing?retryWrites=true
-```
-</details>
-
-<details>
-<summary><b>NEXTAUTH_SECRET</b></summary>
-
+</details><details> <summary><b>NEXTAUTH_SECRET</b></summary>
 Run this in your terminal:
-```bash
+
+Bash
+
 openssl rand -base64 32
-```
 Copy the output and paste it as your secret.
-</details>
 
-<details>
-<summary><b>Stripe Keys</b></summary>
+</details><details> <summary><b>Stripe Keys</b></summary>
+Go to Stripe Dashboard
+Make sure Test mode is enabled
+Copy Publishable key (pk_test_...)
+Click Reveal test key for Secret key (sk_test_...)
+</details><details> <summary><b>Stripe Webhook Secret</b></summary>
+Run the Stripe CLI and copy the whsec_... value:
 
-1. Go to [Stripe Dashboard](https://dashboard.stripe.com/test/apikeys)
-2. Make sure **Test mode** is enabled
-3. Copy **Publishable key** (`pk_test_...`)
-4. Click **Reveal test key** for **Secret key** (`sk_test_...`)
-</details>
+Bash
 
-<details>
-<summary><b>Stripe Webhook Secret</b></summary>
-
-Run the Stripe CLI and copy the `whsec_...` value:
-```bash
 stripe listen --forward-to localhost:3000/api/webhooks/stripe
 # > Ready! Your webhook signing secret is whsec_abc123...
-```
 </details>
+💻 Running the Project
+Development Mode (Desktop Only)
+Open 2 terminals:
 
----
+Bash
 
-## 💻 Running the Project
-
-### Development Mode (Desktop Only)
-
-Open **2 terminals**:
-
-```bash
 # Terminal 1 — Start Next.js
 npm run dev
 
 # Terminal 2 — Start Stripe webhook listener
 stripe listen --forward-to localhost:3000/api/webhooks/stripe
-```
+Open your browser at http://localhost:3000
 
-Open your browser at `http://localhost:3000`
+Production Mode (Required for Phone Testing)
+Open 3 terminals:
 
----
+Bash
 
-### Production Mode (Required for Phone Testing)
-
-Open **3 terminals**:
-
-```bash
 # Terminal 1 — Build and start production server
 npm run build
 npm run start
@@ -318,19 +280,14 @@ ngrok http --domain=yourname.ngrok-free.app 3000
 
 # Terminal 3 — Start Stripe with ngrok URL
 stripe listen --forward-to https://yourname.ngrok-free.app/api/webhooks/stripe
-```
-
----
-
-## 📱 Running With ngrok (Phone Scanner)
-
+📱 Running With ngrok (Phone Scanner)
 ngrok creates a public HTTPS URL for your local server. This is required because:
-- iPhone Safari requires HTTPS for camera access
-- Your phone cannot reach `localhost` (it only exists on your computer)
 
-### One-Time ngrok Setup
+iPhone Safari requires HTTPS for camera access
+Your phone cannot reach localhost (it only exists on your computer)
+One-Time ngrok Setup
+Bash
 
-```bash
 # 1. Download ngrok from https://ngrok.com/download
 
 # 2. Create free account at https://ngrok.com
@@ -342,18 +299,14 @@ ngrok config add-authtoken YOUR_AUTH_TOKEN
 # Go to: https://dashboard.ngrok.com/domains
 # Click "New Domain" — you get: yourname.ngrok-free.app
 # This URL NEVER changes — set it once and forget it
-```
+Update .env.local for ngrok
+Bash
 
-### Update `.env.local` for ngrok
-
-```bash
 # Change this line to your ngrok domain
 NEXTAUTH_URL=https://yourname.ngrok-free.app
-```
+Daily Startup Sequence
+Bash
 
-### Daily Startup Sequence
-
-```bash
 # Terminal 1
 npm run build && npm run start
 
@@ -362,20 +315,15 @@ ngrok http --domain=yourname.ngrok-free.app 3000
 
 # Terminal 3
 stripe listen --forward-to https://yourname.ngrok-free.app/api/webhooks/stripe
-```
+Access URLs
+URL	Purpose
+https://yourname.ngrok-free.app	Main app (any device)
+https://yourname.ngrok-free.app/scanner	QR scanner for door staff
+https://yourname.ngrok-free.app/admin	Admin dashboard
+http://localhost:3000	Local access on your computer
+Phone Scanner Usage
+text
 
-### Access URLs
-
-| URL | Purpose |
-|---|---|
-| `https://yourname.ngrok-free.app` | Main app (any device) |
-| `https://yourname.ngrok-free.app/scanner` | QR scanner for door staff |
-| `https://yourname.ngrok-free.app/admin` | Admin dashboard |
-| `http://localhost:3000` | Local access on your computer |
-
-### Phone Scanner Usage
-
-```
 1. Open Chrome (Android) or Safari (iPhone)
 2. Go to: https://yourname.ngrok-free.app/scanner
 3. Login as admin
@@ -383,15 +331,10 @@ stripe listen --forward-to https://yourname.ngrok-free.app/api/webhooks/stripe
 5. Tap "Allow" when camera permission is requested
 6. Point camera at attendee QR code
 7. Result appears in under 1 second
-```
+🔄 How It Works
+Purchase Flow
+text
 
----
-
-## 🔄 How It Works
-
-### Purchase Flow
-
-```
 Customer clicks "Buy Ticket"
          ↓
 POST /api/checkout creates Stripe Checkout Session
@@ -413,11 +356,9 @@ For each seat purchased:
          ↓
 Customer visits /dashboard
 Individual QR codes appear for each seat ✅
-```
+Scanning Flow
+text
 
-### Scanning Flow
-
-```
 Door staff opens /scanner on phone
          ↓
 jsQR library decodes QR code via camera
@@ -432,13 +373,9 @@ MongoDB findByIdAndUpdate:
 ✅ GREEN  → Ticket was VALID → Now marked USED → Let in
 ⚠️ ORANGE → Ticket was already USED → Deny entry
 ❌ RED    → Token not in database → Fake ticket → Deny
-```
+📁 Project Structure
+text
 
----
-
-## 📁 Project Structure
-
-```
 concert-ticketing/
 │
 ├── .env.local                    # Secret environment variables
@@ -506,33 +443,24 @@ concert-ticketing/
     │
     └── types/
         └── next-auth.d.ts        # NextAuth type extensions
-```
+📡 API Endpoints
+Method	Endpoint	Auth	Description
+POST	/api/auth/register	None	Create new account
+POST	/api/auth/signin	None	Login with email/password
+GET	/api/auth/session	None	Get current session
+GET	/api/events	None	List upcoming events
+POST	/api/events	ADMIN	Create new event
+GET	/api/events/[id]	None	Get single event
+PATCH	/api/events/[id]	ADMIN	Update event
+DELETE	/api/events/[id]	ADMIN	Delete event
+POST	/api/checkout	Login	Create Stripe session
+POST	/api/webhooks/stripe	Stripe	Payment confirmation
+GET	/api/tickets	Login	Get user's tickets
+POST	/api/scanner/validate	ADMIN	Validate QR token
+🗄️ Database Schema
+Users Collection
+TypeScript
 
----
-
-## 📡 API Endpoints
-
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| `POST` | `/api/auth/register` | None | Create new account |
-| `POST` | `/api/auth/signin` | None | Login with email/password |
-| `GET` | `/api/auth/session` | None | Get current session |
-| `GET` | `/api/events` | None | List upcoming events |
-| `POST` | `/api/events` | ADMIN | Create new event |
-| `GET` | `/api/events/[id]` | None | Get single event |
-| `PATCH` | `/api/events/[id]` | ADMIN | Update event |
-| `DELETE` | `/api/events/[id]` | ADMIN | Delete event |
-| `POST` | `/api/checkout` | Login | Create Stripe session |
-| `POST` | `/api/webhooks/stripe` | Stripe | Payment confirmation |
-| `GET` | `/api/tickets` | Login | Get user's tickets |
-| `POST` | `/api/scanner/validate` | ADMIN | Validate QR token |
-
----
-
-## 🗄️ Database Schema
-
-### Users Collection
-```typescript
 {
   _id: ObjectId,
   name: String,
@@ -542,10 +470,9 @@ concert-ticketing/
   createdAt: Date,
   updatedAt: Date
 }
-```
+Events Collection
+TypeScript
 
-### Events Collection
-```typescript
 {
   _id: ObjectId,
   name: String,
@@ -560,10 +487,9 @@ concert-ticketing/
   createdAt: Date,
   updatedAt: Date
 }
-```
+Tickets Collection
+TypeScript
 
-### Tickets Collection
-```typescript
 {
   _id: ObjectId,
   eventId: ObjectId,         // ref: Event
@@ -580,23 +506,16 @@ concert-ticketing/
   createdAt: Date,
   updatedAt: Date
 }
-```
+👨‍💼 Admin Guide
+Accessing the Admin Panel
+text
 
----
-
-## 👨‍💼 Admin Guide
-
-### Accessing the Admin Panel
-
-```
 URL:      http://localhost:3000/admin
 Email:    admin@concerttix.com
 Password: Admin1234!
-```
+Creating an Event
+text
 
-### Creating an Event
-
-```
 1. Go to /admin/events/new
 2. Fill in:
    - Event Name
@@ -609,11 +528,9 @@ Password: Admin1234!
    - Image URL (use Unsplash URLs)
 3. Click Create Event
 4. Event appears on the home page immediately
-```
+Using the Scanner
+text
 
-### Using the Scanner
-
-```
 1. Go to /scanner on your phone (use ngrok URL for phone)
 2. Login as admin
 3. Tap Start Scanner
@@ -624,29 +541,21 @@ Password: Admin1234!
    ORANGE = Already scanned — deny entry  
    RED    = Invalid/fake — deny entry
 7. Tap Scan Next Ticket to continue
-```
+💳 Testing Payments
+Stripe Test Cards
+Card Number	Result
+4242 4242 4242 4242	✅ Payment succeeds
+4000 0000 0000 0002	❌ Card declined
+4000 0000 0000 9995	❌ Insufficient funds
+4000 0000 0000 0069	❌ Expired card
+For all test cards use:
 
----
+Expiry: Any future date (e.g. 12/34)
+CVC: Any 3 digits (e.g. 123)
+ZIP: Any 5 digits (e.g. 12345)
+Complete Test Flow
+text
 
-## 💳 Testing Payments
-
-### Stripe Test Cards
-
-| Card Number | Result |
-|---|---|
-| `4242 4242 4242 4242` | ✅ Payment succeeds |
-| `4000 0000 0000 0002` | ❌ Card declined |
-| `4000 0000 0000 9995` | ❌ Insufficient funds |
-| `4000 0000 0000 0069` | ❌ Expired card |
-
-**For all test cards use:**
-- Expiry: Any future date (e.g. `12/34`)
-- CVC: Any 3 digits (e.g. `123`)
-- ZIP: Any 5 digits (e.g. `12345`)
-
-### Complete Test Flow
-
-```
 1. Register a customer account
 2. Browse events on the home page
 3. Click an event → View event detail
@@ -658,111 +567,74 @@ Password: Admin1234!
 9. Your individual QR codes appear (one per seat)
 10. Open /scanner as admin
 11. Scan each QR code to validate entry
-```
-
----
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-<details>
-<summary><b>MONGODB_URI error on startup</b></summary>
-
+🔧 Troubleshooting
+Common Issues
+<details> <summary><b>MONGODB_URI error on startup</b></summary>
 Make sure your connection string includes the database name:
-```
+
+text
+
 # Wrong — missing database name
 mongodb+srv://user:pass@cluster.net/?retry...
 
 # Correct — concert_ticketing included
 mongodb+srv://user:pass@cluster.net/concert_ticketing?retry...
-```
-</details>
+</details><details> <summary><b>Login says "Invalid email or password"</b></summary>
+Run the fix script: node moveadmin.js
+Check your MONGODB_URI includes /concert_ticketing
+Restart the server after any .env.local changes
+</details><details> <summary><b>Stripe webhook returning 400</b></summary>
+Your STRIPE_WEBHOOK_SECRET does not match the CLI output.
 
-<details>
-<summary><b>Login says "Invalid email or password"</b></summary>
-
-1. Run the fix script: `node moveadmin.js`
-2. Check your MONGODB_URI includes `/concert_ticketing`
-3. Restart the server after any `.env.local` changes
-</details>
-
-<details>
-<summary><b>Stripe webhook returning 400</b></summary>
-
-Your `STRIPE_WEBHOOK_SECRET` does not match the CLI output.
-1. Run: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`
-2. Copy the `whsec_...` value shown
-3. Update `.env.local` with the exact value
-4. Restart the server
-</details>
-
-<details>
-<summary><b>QR code not generating after payment</b></summary>
-
+Run: stripe listen --forward-to localhost:3000/api/webhooks/stripe
+Copy the whsec_... value shown
+Update .env.local with the exact value
+Restart the server
+</details><details> <summary><b>QR code not generating after payment</b></summary>
 Check Terminal 1 for webhook logs. Common causes:
-- Stripe CLI not running (Terminal 2)
-- Wrong `STRIPE_WEBHOOK_SECRET` in `.env.local`
-- Metadata missing from Stripe session (userId, eventId)
-</details>
 
-<details>
-<summary><b>Camera not working on iPhone</b></summary>
-
+Stripe CLI not running (Terminal 2)
+Wrong STRIPE_WEBHOOK_SECRET in .env.local
+Metadata missing from Stripe session (userId, eventId)
+</details><details> <summary><b>Camera not working on iPhone</b></summary>
 iPhone requires HTTPS for camera access.
-1. Must use ngrok (provides HTTPS automatically)
-2. Cannot use `http://localhost:3000` on iPhone
-3. Make sure you are in Safari on iPhone
-4. Go to iPhone Settings → Safari → Camera → Allow
-</details>
 
-<details>
-<summary><b>Scanner shows "An error occurred"</b></summary>
-
-1. Check Terminal 1 for the exact error
-2. Verify you are logged in as ADMIN not CUSTOMER
-3. Test session: visit `/api/auth/session` on your phone
-4. Make sure `credentials: "include"` is in the fetch call
-</details>
-
-<details>
-<summary><b>ngrok shows ERR_NGROK_3200</b></summary>
-
+Must use ngrok (provides HTTPS automatically)
+Cannot use http://localhost:3000 on iPhone
+Make sure you are in Safari on iPhone
+Go to iPhone Settings → Safari → Camera → Allow
+</details><details> <summary><b>Scanner shows "An error occurred"</b></summary>
+Check Terminal 1 for the exact error
+Verify you are logged in as ADMIN not CUSTOMER
+Test session: visit /api/auth/session on your phone
+Make sure credentials: "include" is in the fetch call
+</details><details> <summary><b>ngrok shows ERR_NGROK_3200</b></summary>
 ngrok is not running. Start it:
-```bash
+
+Bash
+
 ngrok http --domain=yourname.ngrok-free.app 3000
-```
+</details><details> <summary><b>Login works on desktop but not phone</b></summary>
+NEXTAUTH_URL does not match your ngrok URL.
+
+Check Terminal 2 for your exact ngrok URL
+Update .env.local: NEXTAUTH_URL=https://your-url.ngrok-free.app
+Rebuild: npm run build && npm run start
 </details>
+📜 Available Scripts
+Bash
 
-<details>
-<summary><b>Login works on desktop but not phone</b></summary>
-
-`NEXTAUTH_URL` does not match your ngrok URL.
-1. Check Terminal 2 for your exact ngrok URL
-2. Update `.env.local`: `NEXTAUTH_URL=https://your-url.ngrok-free.app`
-3. Rebuild: `npm run build && npm run start`
-</details>
-
----
-
-## 📜 Available Scripts
-
-```bash
 npm run dev      # Start development server (localhost only)
 npm run build    # Build for production
 npm run start    # Start production server (required for ngrok)
 npm run lint     # Run ESLint code checks
 npm run seed     # Seed database with admin + sample events (run once)
 npm run prod     # Build and start in one command
-```
-
----
-
-## 🤝 Contributing
-
+🤝 Contributing
 Contributions are welcome. Please follow these steps:
 
-```bash
+Bash
+
 # 1. Fork the repository
 
 # 2. Create a feature branch
@@ -777,19 +649,14 @@ git commit -m "Add: description of what you added"
 git push origin feature/your-feature-name
 
 # 6. Open a Pull Request
-```
+Coding Standards
+All files must be TypeScript
+No any types without a comment explaining why
+All API routes must have authentication checks
+All database operations must have try/catch blocks
+📊 Project Stats
+text
 
-### Coding Standards
-- All files must be TypeScript
-- No `any` types without a comment explaining why
-- All API routes must have authentication checks
-- All database operations must have try/catch blocks
-
----
-
-## 📊 Project Stats
-
-```
 Total Source Files        ~40 files
 Languages                 TypeScript, CSS
 npm Packages              24 packages
@@ -799,30 +666,22 @@ API Endpoints             13 endpoints
 Application Pages         12 pages
 React Components          8 components
 Security Measures         10 measures
-```
-
----
-
-## 🔮 Future Roadmap
-
-- [ ] Email ticket delivery with QR code attachment
-- [ ] PDF ticket download
-- [ ] Google and Apple OAuth login
-- [ ] Event search and filtering
-- [ ] Stripe refund processing
-- [ ] Waiting list for sold out events
-- [ ] Promotional discount codes
-- [ ] Admin analytics dashboard with charts
-- [ ] React Native mobile app
-- [ ] Seat map selection
-
----
-
-## 📄 License
-
+🔮 Future Roadmap
+ Email ticket delivery with QR code attachment
+ PDF ticket download
+ Google and Apple OAuth login
+ Event search and filtering
+ Stripe refund processing
+ Waiting list for sold out events
+ Promotional discount codes
+ Admin analytics dashboard with charts
+ React Native mobile app
+ Seat map selection
+📄 License
 This project is licensed under the MIT License.
 
-```
+text
+
 MIT License
 
 Copyright (c) 2026 ConcertTix
@@ -844,27 +703,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-```
-
----
-
-## 🙏 Acknowledgements
-
-- [Next.js](https://nextjs.org/) — The React framework
-- [Stripe](https://stripe.com/) — Payment processing
-- [MongoDB Atlas](https://www.mongodb.com/atlas) — Cloud database
-- [NextAuth.js](https://next-auth.js.org/) — Authentication
-- [Tailwind CSS](https://tailwindcss.com/) — Styling
-- [ngrok](https://ngrok.com/) — HTTPS tunneling
-- [jsQR](https://github.com/cozmo/jsQR) — QR code decoding
-
----
-
+🙏 Acknowledgements
+Next.js — The React framework
+Stripe — Payment processing
+MongoDB Atlas — Cloud database
+NextAuth.js — Authentication
+Tailwind CSS — Styling
+ngrok — HTTPS tunneling
+jsQR — QR code decoding
 <div align="center">
-
-**Built with ❤️ using Next.js, MongoDB, and Stripe**
+Built with ❤️ using Next.js, MongoDB, and Stripe
 
 ⭐ Star this repo if you found it helpful
 
 </div>
-```
