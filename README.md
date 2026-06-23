@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# 🎵 ConcertTix
 
-First, run the development server:
+### Secure Full-Stack Concert Ticketing System with QR Code Entry Validation
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/atlas)
+[![Stripe](https://img.shields.io/badge/Stripe-Payments-purple?style=for-the-badge&logo=stripe)](https://stripe.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38bdf8?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+<br />
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+![ConcertTix Preview](https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&h=400&fit=crop)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+<br />
 
-## Learn More
+**Browse concerts → Buy tickets securely via Stripe → Get unique QR codes → Scan at venue gate**
 
-To learn more about Next.js, take a look at the following resources:
+[View Demo](#) · [Report Bug](#) · [Request Feature](#)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+</div>
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📋 Table of Contents
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [About The Project](#-about-the-project)
+- [Core Security Principle](#-core-security-principle)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Prerequisites](#-prerequisites)
+- [Installation](#-installation)
+- [Environment Variables](#-environment-variables)
+- [Running the Project](#-running-the-project)
+- [Running With ngrok (Phone Scanner)](#-running-with-ngrok-phone-scanner)
+- [How It Works](#-how-it-works)
+- [Project Structure](#-project-structure)
+- [API Endpoints](#-api-endpoints)
+- [Database Schema](#-database-schema)
+- [Admin Guide](#-admin-guide)
+- [Testing Payments](#-testing-payments)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🎯 About The Project
+
+ConcertTix is a secure full-stack concert ticket booking and QR-based venue entry validation platform. Customers browse upcoming concerts, purchase tickets securely through Stripe, and receive unique QR codes instantly after payment confirmation. Door staff use any smartphone to scan QR codes and validate entry in real time.
+
+### The Problem It Solves
+
+| Problem | Solution |
+|---|---|
+| Ticket fraud (fake PDFs) | UUIDv4 tokens with 122 bits of randomness |
+| Duplicate entry (shared QR) | Atomic VALID → USED status update |
+| Manual paper checking | Digital smartphone scanner |
+| Overselling | Atomic MongoDB inventory decrement |
+| Multi-ticket confusion | One QR code per seat (5 tickets = 5 QR codes) |
+| Delayed ticket delivery | QR generated within seconds of payment |
+
+---
+
+## 🔐 Core Security Principle
